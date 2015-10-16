@@ -1,0 +1,295 @@
+#%RAML 0.8
+
+title: Spring Boot Actuator Endpoints
+baseUri: http://localhost:8080
+version: (local)
+protocols: [HTTP]
+mediaType: application/json
+
+documentation:
+  - title: Manage
+    content: |
+        Actuator endpoints allow you to monitor and interact with your application. Spring Boot includes a number of built-in endpoints and you can also add your own. For example the health endpoint provides basic application health information.
+
+/manage/autoconfig:
+  get:
+    description: |
+      ## autoconfig
+
+      Displays an auto-configuration report showing all auto-configuration candidates and the reason why they 'were' or 'were not' applied.
+
+    responses:
+      200:
+        description: Displays an auto-configuration report.
+        body:
+          application/json:
+            example: |
+              {
+                "positive_matches": {
+                  "AuditAutoConfiguration#authenticationAuditListener": [
+                    {
+                      "condition": "OnClassCondition",
+                      "message": "@ConditionalOnClass classes found: org.springframework.security.authentication.event.AbstractAuthenticationEvent"
+                    }
+                  ]
+                }
+              }
+
+/manage/beans:
+  get:
+    description: |
+      ## beans
+
+      Displays a complete list of all the Spring beans in your application.
+
+    responses:
+      200:
+        description: Displays a list of Spring beans.
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "context": "service:integration:8000",
+                  "parent": null,
+                  "beans": [
+                    {
+                      "bean": "healthEndpoint",
+                      "scope": "singleton",
+                      "type": "org.springframework.boot.actuate.endpoint.HealthEndpoint",
+                      "resource": "class path resource [org/springframework/boot/actuate/autoconfigure/EndpointAutoConfiguration.class]",
+                      "dependencies": []
+                    }
+                  ]
+                }
+              ]
+
+/manage/configprops:
+  get:
+    description: |
+      ## configprops
+
+      Displays a collated list of all @ConfigurationProperties.
+
+    responses:
+      200:
+        description: Displays a list of @ConfigurationProperties.
+        body:
+          application/json:
+            example: |
+              {
+                "configurationPropertiesReportEndpoint": {
+                  "prefix": "endpoints.configprops",
+                  "properties": {
+                    "id": "configprops",
+                    "sensitive": true,
+                    "enabled": true
+                  }
+                }
+              }
+
+/manage/dump:
+  get:
+    description: |
+      ## thread dump
+
+      Performs a thread dump.
+
+    responses:
+      200:
+        description: Performs a thread dump.
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "thread_name": "http-nio-8000-exec-3",
+                  "thread_id": 29,
+                  "blocked_time": -1,
+                  "blocked_count": 0,
+                  "waited_time": -1,
+                  "waited_count": 1,
+                  "lock_name": "java.util.concurrent.locks.AbstractQueuedSynchronizer$ConditionObject@541cc0af",
+                  "lock_owner_id": -1,
+                  "in_native": false,
+                  "suspended": false,
+                  "thread_state": "WAITING",
+                  "stack_trace": [
+                    {
+                      "method_name": "park",
+                      "file_name": "Unsafe.java",
+                      "line_number": -2,
+                      "class_name": "sun.misc.Unsafe",
+                      "native_method": true
+                    }
+                  ]
+                }
+              ]
+
+/manage/env:
+  get:
+    description: |
+      ## env
+
+      Exposes properties from Spring's ConfigurableEnvironment.
+
+    responses:
+      200:
+        description: Exposes properties from Spring's ConfigurableEnvironment.
+        body:
+          application/json:
+            example: |
+              {
+                "profiles": [
+                  "local"
+                ]
+              }
+
+/manage/health:
+  get:
+    description: |
+      ## health
+
+      Shows application health information (a simple 'status' when accessed over an unauthenticated connection or full message details when authenticated).
+
+    responses:
+      200:
+        description: Shows health information.
+        body:
+          application/json:
+            example: |
+              {
+                "status": "UP",
+                "diskSpace": {
+                  "status": "UP",
+                  "free": 200577220608,
+                  "threshold": 10485760
+                },
+                "db": {
+                  "status": "UP",
+                  "database": "H2",
+                  "hello": 1
+                }
+              }
+
+/manage/info:
+  get:
+    description: |
+      ## info
+
+      Displays arbitrary application info.
+
+    responses:
+      200:
+        description: Displays arbitrary info.
+        body:
+          application/json:
+            example: |
+              {
+                "git" : {
+                  "branch" : "HEAD",
+                  "commit" : {
+                    "id" : "3938356",
+                    "time" : "1444992008"
+                  }
+                }
+              }
+
+/manage/metrics:
+  get:
+    description: |
+      ## metrics
+
+      Shows 'metrics' information for the current application.
+
+    responses:
+      200:
+        description: Shows 'metrics' information.
+        body:
+          application/json:
+            example: |
+              {
+                "mem": 140660,
+                "mem.free": 34683,
+                "processors": 1
+              }
+
+/manage/mappings:
+  get:
+    description: |
+      ## mappings
+
+      Displays a collated list of all @RequestMapping paths.
+
+    responses:
+      200:
+        description: Displays a list of @RequestMapping paths.
+        body:
+          application/json:
+            example: |
+              {
+                  "{[/alps],methods=[GET]}": {
+                    "bean": "fallbackMapping",
+                    "method": "org.springframework.http.HttpEntity<org.springframework.hateoas.alps.Alps> org.springframework.data.rest.webmvc.alps.AlpsController.alps()"
+                  }
+              }
+
+/manage/shutdown:
+  post:
+    description: |
+      ## shutdown
+
+      Allows the application to be gracefully shutdown (not enabled by default).
+
+    responses:
+      200:
+        description: Allows the application to be shutdown (not enabled by default).
+        body:
+          application/json:
+            example: |
+              {
+                "message": "Shutting down, bye..."
+              }
+
+/manage/trace:
+  get:
+    description: |
+      ## trace
+
+      Displays trace information (by default the last few HTTP requests).
+
+    responses:
+      200:
+        description: Displays trace information.
+        body:
+          application/json:
+            example: |
+              [
+                {
+                  "timestamp": 1444999251766,
+                  "info": {
+                    "method": "GET",
+                    "path": "/manage/health",
+                    "headers": {
+                      "request": {
+                        "host": "127.0.0.1:8080",
+                        "user-agent": "ELB-HealthChecker/1.0",
+                        "accept": "*/*",
+                        "connection": "keep-alive"
+                      },
+                      "response": {
+                        "X-XSS-Protection": "1; mode=block",
+                        "Cache-Control": "no-cache, no-store, max-age=0, must-revalidate",
+                        "Pragma": "no-cache",
+                        "Expires": "0",
+                        "X-Application-Context": "service:local:8080",
+                        "Content-Type": "application/json;charset=UTF-8",
+                        "Transfer-Encoding": "chunked",
+                        "Date": "Fri, 16 Oct 2015 12:40:51 GMT",
+                        "status": "200"
+                      }
+                    }
+                  }
+                }
+              ]
+
